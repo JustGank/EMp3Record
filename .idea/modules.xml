@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/EMp3Record.iml" filepath="$PROJECT_DIR$/EMp3Record.iml" group="EMp3Record" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="EMp3Record/app" />
+      <module fileurl="file://$PROJECT_DIR$/emp3recorder/emp3recorder.iml" filepath="$PROJECT_DIR$/emp3recorder/emp3recorder.iml" group="EMp3Record/emp3recorder" />
+    </modules>
+  </component>
+</project>
