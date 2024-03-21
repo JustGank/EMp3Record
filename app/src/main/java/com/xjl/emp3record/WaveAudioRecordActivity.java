@@ -2,25 +2,26 @@ package com.xjl.emp3record;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.xjl.emp3recorder.record_wave.RecordWaveView;
 import com.xjl.emp3recorder.utils.MediaPlayerHepler;
 import com.xjl.emp3recorder.utils.WaveRecordBinder;
-import com.xjl.emp3recorder.record_wave.RecordWaveView;
-
+import com.xjl.emp3record_demo.R;
 import java.io.File;
 
 /**
  * Created by x33664 on 2019/2/21.
  */
 
-public class WaveAudioRecordActivity extends Activity {
+public class WaveAudioRecordActivity extends AppCompatActivity {
 
     private static final String TAG = WaveAudioRecordActivity.class.getSimpleName();
 

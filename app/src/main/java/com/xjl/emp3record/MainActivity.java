@@ -7,9 +7,11 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.xjl.emp3record_demo.R;
 import com.xjl.emp3recorder.record_wave.RecordWaveView;
 
 import java.io.File;

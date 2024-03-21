@@ -12,11 +12,12 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Xfermode;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 
-import com.xjl.emp3recorder.R;
+import androidx.core.content.ContextCompat;
+
+import com.xjl.emp3record.R;
 
 import java.util.Random;
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.xjl.emp3record">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -13,16 +12,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.xjl.emp3record.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RealTimeWaveRecordActivity" />
-        <activity android:name=".TouchAudioRecordActivity" />
-        <activity android:name=".WaveAudioRecordActivity" />
+        <activity android:name="com.xjl.emp3record.RealTimeWaveRecordActivity"
+            android:exported="false"/>
+        <activity android:name="com.xjl.emp3record.TouchAudioRecordActivity"
+            android:exported="false"/>
+        <activity android:name="com.xjl.emp3record.WaveAudioRecordActivity"
+            android:exported="false"/>
 
     </application>
 

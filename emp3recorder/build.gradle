@@ -1,13 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-
-    compileSdkVersion 26
-
+    namespace 'com.xjl.emp3record'
+    compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 26
+        minSdkVersion 23
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         externalNativeBuild {
@@ -15,7 +14,7 @@ android {
                 cppFlags ""
             }
         }
-
+        ndkVersion "20.0.5594570"
 
     }
 
@@ -38,12 +37,10 @@ android {
         }
     }
 
-
-
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-   
+    api 'androidx.appcompat:appcompat:1.6.1'
 
 }

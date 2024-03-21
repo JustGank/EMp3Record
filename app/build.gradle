@@ -1,11 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    namespace 'com.xjl.emp3record_demo'
+    compileSdkVersion 33
+
     defaultConfig {
-        applicationId "com.xjl.emp3record"
-        minSdkVersion 19
-        targetSdkVersion 26
+        applicationId "com.xjl.emp3record_demo"
+        minSdkVersion 23
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -22,6 +24,5 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation project(':emp3recorder')
 }
