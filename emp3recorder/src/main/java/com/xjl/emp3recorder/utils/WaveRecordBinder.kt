@@ -1,182 +1,120 @@
-package com.xjl.emp3recorder.utils;
+package com.xjl.emp3recorder.utils
 
-import android.content.Context;
-import android.util.Log;
+import android.Manifest
+import android.content.Context
+import android.util.Log
+import androidx.annotation.RequiresPermission
+import com.xjl.emp3recorder.logger.Logger
+import com.xjl.emp3recorder.mp3record.MP3Recorder
+import com.xjl.emp3recorder.mp3record.MP3Recorder.OnRecordListener
+import com.xjl.emp3recorder.record_wave.RecordWaveView
+import com.xjl.emp3recorder.record_wave.RecordWaveView.RefreshAmplitude
+import java.io.File
+import java.io.IOException
 
-import com.xjl.emp3recorder.mp3record.MP3Recorder;
-import com.xjl.emp3recorder.record_wave.RecordWaveView;
-
-import java.io.File;
-import java.io.IOException;
-
-public class WaveRecordBinder {
-
-    private static final String TAG = "WaveRecordBinder";
-
-    private RecordWaveView waveview;
-
-    private MP3Recorder mp3Recorder;
-
+class WaveRecordBinder(
+    private val waveview: RecordWaveView,
     /**
      * 文件存储的地址
-     * */
-    private String filePath;
+     */
+    private val filePath: String
+) {
+    private val TAG = "WaveRecordBinder"
 
-    private Context context;
+    var mp3Recorder: MP3Recorder?
+        private set
 
-    private File currentRecordFile =null;
+    var currentRecordFile: File? = null
+        private set
 
-    private final String mp3Endcase = ".mp3";
+    private val mp3Endcase = ".mp3"
+
+    var recordListener: OnRecordListener = object : OnRecordListener {
+        override fun onStart() {
+            Logger.i("$TAG start recording!")
+            waveview.startAnim()
+        }
+
+        override fun onStop(file: File?, duration: Long) {
+            Logger.i("$TAG stop recording file is exist=" + (file != null) + " duration=" + duration)
+            waveview.stopAnim()
+        }
+
+        override fun onRecording(mVolumeDb: Int, mVolume: Int) {}
+    }
+    private var refreshAmplitude: RefreshAmplitude = object : RefreshAmplitude {
+        override fun refresh() {
+            val db: Int = volumeDb
+            Logger.i("$TAG RefreshAmplitude refresh volumeDb = $db")
+            waveview.setVolume(db)
+        }
+    }
 
     /**
      * 自动生成地址
-     * */
-    public WaveRecordBinder(RecordWaveView waveview,String filePath) {
-        this.waveview = waveview;
-        this.filePath=filePath;
-        this.context = this.waveview.getContext();
-        File file = new File(filePath);
+     */
+    init {
+        val file = File(filePath)
         if (!file.exists()) {
-            file.mkdirs();
+            file.mkdirs()
         }
-        mp3Recorder = new MP3Recorder(file);
-        mp3Recorder.setOnRecordListener(recordListener);
-        waveview.setRefreshAmplitude(refreshAmplitude);
+        mp3Recorder = MP3Recorder(file).apply {
+            setOnRecordListener(recordListener)
+        }
+        waveview.setRefreshAmplitude(refreshAmplitude)
     }
 
+    val volumeDb: Int
+        get() = mp3Recorder?.volumeDb ?: 0
 
-    MP3Recorder.OnRecordListener recordListener = new MP3Recorder.OnRecordListener() {
-        @Override
-        public void onStart() {
-            Log.e(TAG, "start recording!");
-            waveview.startAnim();
-        }
+    val volume: Int
+        get() = mp3Recorder?.volume ?: 0
 
-        @Override
-        public void onStop(File file,long duration) {
-            Log.e(TAG, "stop recording file is exist=" + (file != null)+" duration="+duration);
-            waveview.stopAnim();
-        }
-
-        @Override
-        public void onRecording(int mVolumeDb, int mVolume) {
-
-        }
-
-
-    };
-
-    RecordWaveView.RefreshAmplitude refreshAmplitude = new RecordWaveView.RefreshAmplitude() {
-        @Override
-        public void refresh() {
-            int db=getVolumeDb();
-            Log.e(TAG,"getVolumeDb = "+db);
-            waveview.setVolume(db);
-        }
-    };
-
-    public int getVolumeDb() {
-        if (mp3Recorder != null) {
-            return mp3Recorder.getVolumeDb();
-        }
-        return 0;
-    }
-
-    public int getVolume() {
-        if (mp3Recorder != null) {
-            return mp3Recorder.getVolume();
-        }
-        return 0;
-    }
-
-    public boolean isRecording() {
-        if (mp3Recorder != null) {
-            return mp3Recorder.isRecording();
-        } else {
-            return false;
-        }
-    }
+    val isRecording: Boolean
+        get() = mp3Recorder?.isRecording == true
 
     /**
      * 绑定相关的生命周期
-     * */
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if (hasFocus && isRecording()) {
-            waveview.startAnim();
+     */
+    fun onWindowFocusChanged(hasFocus: Boolean) {
+        if (hasFocus && isRecording) {
+            waveview.startAnim()
         }
     }
 
-    public MP3Recorder getMp3Recorder(){
-        return mp3Recorder;
-    }
-
-
-    public File start(){
-        return start(System.currentTimeMillis()+mp3Endcase);
-    }
-
-
-    public File start(String name){
-
-        if(isRecording()){
-            return null;
+    @JvmOverloads
+    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
+    fun start(name: String = System.currentTimeMillis().toString() + mp3Endcase): File? {
+        if (isRecording) {
+            return null
         }
-        String tempFilePath=filePath+name+(name.endsWith(mp3Endcase)?"":mp3Endcase);
-
-        currentRecordFile=new File(tempFilePath);
-
-        if(null==mp3Recorder)
-        {
-          mp3Recorder=new MP3Recorder(currentRecordFile);
-        }else
-        {
-            mp3Recorder.setFile(currentRecordFile);
+        val tempFilePath = filePath + name + if (name.endsWith(mp3Endcase)) "" else mp3Endcase
+        currentRecordFile = File(tempFilePath)
+        if (null == mp3Recorder) {
+            mp3Recorder = MP3Recorder(currentRecordFile!!)
+        } else {
+            mp3Recorder!!.setFile(currentRecordFile!!)
         }
-
         try {
-            mp3Recorder.start(-1);
-            waveview.startAnim();
-        } catch (IOException e) {
-            e.printStackTrace();
+            mp3Recorder!!.start(-1)
+            waveview.startAnim()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-
-        return currentRecordFile;
+        return currentRecordFile
     }
 
 
 
-    /**
-     * 挂起时时继续录音还是还是保存
-     * */
-    public void onPause(boolean cancel,boolean delete){
-        if(cancel)
-        {
-
-        }else
-        {
-
-
-        }
-        waveview.pauseAnum();
-    }
-
-
-
-
-
-    public void stop() {
-        waveview.stopAnim();
-        if (mp3Recorder != null && mp3Recorder.isRecording()){
-            mp3Recorder.stop();
-            if (mp3Recorder != null){
-                mp3Recorder.stop();
+    fun stop() {
+        waveview.stopAnim()
+        if (mp3Recorder != null && mp3Recorder!!.isRecording) {
+            mp3Recorder!!.stop()
+            if (mp3Recorder != null) {
+                mp3Recorder!!.stop()
             }
         }
-
     }
 
-    public File getCurrentRecordFile(){
-        return currentRecordFile;
-    }
 
 }

@@ -1,43 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.xjl.emp3record.MainActivity"
     android:orientation="vertical">
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
         android:gravity="center"
-        android:onClick="RealWaveRecord"
+        android:onClick="recordButton"
         android:padding="5dp"
-        android:text="RealWaveRecord"
-        android:textSize="20dp" />
+        android:text="开始录音" />
 
     <Button
+        android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
         android:gravity="center"
-        android:onClick="TouchAudioRecord"
+        android:onClick="player"
         android:padding="5dp"
-        android:text="TouchAudioRecord"
-        android:textSize="20dp" />
+        android:text="播放录音" />
 
-    <Button
+    <com.xjl.emp3recorder.record_wave.RecordWaveView
+        android:id="@+id/waveview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:gravity="center"
-        android:onClick="WaveAudioRecord"
-        android:padding="5dp"
-        android:text="WaveAudioRecord"
-        android:textSize="20dp" />
-
-
+        android:layout_height="200dp" />
 
 
 </LinearLayout>
