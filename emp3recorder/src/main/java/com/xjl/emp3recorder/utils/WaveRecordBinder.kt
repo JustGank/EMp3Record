@@ -1,8 +1,6 @@
 package com.xjl.emp3recorder.utils
 
 import android.Manifest
-import android.content.Context
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import com.xjl.emp3recorder.logger.Logger
 import com.xjl.emp3recorder.mp3record.MP3Recorder
@@ -17,7 +15,7 @@ class WaveRecordBinder(
     /**
      * 文件存储的地址
      */
-    private val filePath: String
+    private val cacheFileDir: String
 ) {
     private val TAG = "WaveRecordBinder"
 
@@ -35,8 +33,8 @@ class WaveRecordBinder(
             waveview.startAnim()
         }
 
-        override fun onStop(file: File?, duration: Long) {
-            Logger.i("$TAG stop recording file is exist=" + (file != null) + " duration=" + duration)
+        override fun onStop(file: File, duration: Long) {
+            Logger.i("$TAG stop recording file is exist= ${file.exists()} duration=$duration"  )
             waveview.stopAnim()
         }
 
@@ -54,11 +52,11 @@ class WaveRecordBinder(
      * 自动生成地址
      */
     init {
-        val file = File(filePath)
+        val file = File(cacheFileDir)
         if (!file.exists()) {
             file.mkdirs()
         }
-        mp3Recorder = MP3Recorder(file).apply {
+        mp3Recorder = MP3Recorder().apply {
             setOnRecordListener(recordListener)
         }
         waveview.setRefreshAmplitude(refreshAmplitude)
@@ -70,7 +68,7 @@ class WaveRecordBinder(
     val volume: Int
         get() = mp3Recorder?.volume ?: 0
 
-    val isRecording: Boolean
+    var isRecording: Boolean = false
         get() = mp3Recorder?.isRecording == true
 
     /**
@@ -84,19 +82,18 @@ class WaveRecordBinder(
 
     @JvmOverloads
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
-    fun start(name: String = System.currentTimeMillis().toString() + mp3Endcase): File? {
+    fun start(fileName: String = System.currentTimeMillis().toString() + mp3Endcase): File? {
         if (isRecording) {
             return null
         }
-        val tempFilePath = filePath + name + if (name.endsWith(mp3Endcase)) "" else mp3Endcase
+        val tempFilePath =
+            cacheFileDir + File.separator + fileName + if (fileName.endsWith(mp3Endcase)) "" else mp3Endcase
         currentRecordFile = File(tempFilePath)
         if (null == mp3Recorder) {
-            mp3Recorder = MP3Recorder(currentRecordFile!!)
-        } else {
-            mp3Recorder!!.setFile(currentRecordFile!!)
+            mp3Recorder = MP3Recorder( )
         }
         try {
-            mp3Recorder!!.start(-1)
+            mp3Recorder!!.start(-1, currentRecordFile!!)
             waveview.startAnim()
         } catch (e: IOException) {
             e.printStackTrace()
@@ -105,15 +102,10 @@ class WaveRecordBinder(
     }
 
 
-
     fun stop() {
         waveview.stopAnim()
-        if (mp3Recorder != null && mp3Recorder!!.isRecording) {
-            mp3Recorder!!.stop()
-            if (mp3Recorder != null) {
-                mp3Recorder!!.stop()
-            }
-        }
+        mp3Recorder?.let { if(isRecording) it.stop() }
+        isRecording=false
     }
 
 

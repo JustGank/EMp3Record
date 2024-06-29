@@ -24,7 +24,7 @@ import kotlin.math.sqrt
  * 这里使用了LAME进行编码压缩，转换成MP3进行播放。
  * AudioRecord录制完成的是PCM数据是不能直接播放的。
  */
-class MP3Recorder(private var mRecordFile: File) {
+class MP3Recorder() {
 
     //=======================AudioRecord Default Settings=======================
     /**
@@ -74,9 +74,7 @@ class MP3Recorder(private var mRecordFile: File) {
     //音量
     private var realVolume = 0
 
-    fun setFile(mRecordFile: File) {
-        this.mRecordFile = mRecordFile
-    }
+    private var mRecordFile: File?=null
 
     private var startTime: Long = 0
     private var duration: Long = 0
@@ -90,10 +88,11 @@ class MP3Recorder(private var mRecordFile: File) {
     @OptIn(DelicateCoroutinesApi::class)
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     @Throws(IOException::class)
-    fun start(maxDuration: Long) {
+    fun start(maxDuration: Long,mRecordFile: File) {
         if (isRecording) {
             return
         }
+        this.mRecordFile=mRecordFile
         mOnRecordListener?.onStart()
         isRecording = true
         initAudioRecorder()
@@ -214,7 +213,7 @@ class MP3Recorder(private var mRecordFile: File) {
 
     interface OnRecordListener {
         fun onStart()
-        fun onStop(file: File?, duration: Long)
+        fun onStop(file: File, duration: Long)
         fun onRecording(mVolumeDb: Int, mVolume: Int)
     }
 
